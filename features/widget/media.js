@@ -146,8 +146,9 @@ class MarqueeLabel extends St.ScrollView {
         this._stop();
         if (this._idleId) { GLib.source_remove(this._idleId); this._idleId = 0; }
         this._idleId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
-            if (this.mapped && this._enabled) this._start();
+            const id = this._idleId;
             this._idleId = 0;
+            if (this.mapped && this._enabled) this._start();
             return GLib.SOURCE_REMOVE;
         });
     }
@@ -172,10 +173,21 @@ class MarqueeLabel extends St.ScrollView {
 
     _stop() {
         this._scrolling = false;
-        if (this._scrollId) { GLib.source_remove(this._scrollId); this._scrollId = 0; }
-        if (this._idleId) { GLib.source_remove(this._idleId); this._idleId = 0; }
+        if (this._scrollId > 0) {
+            GLib.source_remove(this._scrollId);
+            this._scrollId = 0;
+        }
+        if (this._idleId > 0) {
+            GLib.source_remove(this._idleId);
+            this._idleId = 0;
+        }
         const adj = this.get_hscroll_bar()?.get_adjustment?.();
         if (adj) adj.set_value(0);
+    }
+
+    destroy() {
+        this._stop();
+        super.destroy();
     }
 
     set text(v) { this.label.text = v ?? ""; }
@@ -689,6 +701,7 @@ class MediaItem extends MessageList.Message {
         this._options = options;
         this._player  = player;
 
+        this._progressControl = null;
         if (options.progressEnabled) {
             try {
                 const ctrl = new ProgressControl(player, options);
@@ -701,24 +714,34 @@ class MediaItem extends MessageList.Message {
         this._createControlButtons();
         this._player.connectObject("changed", this._update.bind(this), this);
         this._marqueeTitle       = null;
+        this._marqueeIdleId      = 0;
         this._titleActorResolved = false;
-        this.connect("destroy", () => {
-            if (this._marqueeIdleId) { GLib.source_remove(this._marqueeIdleId); this._marqueeIdleId = 0; }
-            if (this._marqueeTitle) {
-                this._marqueeTitle.destroy();
-                this._marqueeTitle = null;
-            }
-            if (this._progressControl) {
-                this._progressControl.destroy();
-                this._progressControl = null;
-            }
-        });
+
+        this.connect("destroy", this._onMediaItemDestroy.bind(this));
         this._update();
         this._setupMarqueeDeferred();
     }
 
+    _onMediaItemDestroy() {
+        if (this._marqueeIdleId > 0) {
+            GLib.source_remove(this._marqueeIdleId);
+            this._marqueeIdleId = 0;
+        }
+        if (this._marqueeTitle) {
+            this._marqueeTitle.destroy();
+            this._marqueeTitle = null;
+        }
+        if (this._progressControl) {
+            this._progressControl.destroy();
+            this._progressControl = null;
+        }
+    }
+
     _setupMarqueeDeferred() {
-        if (this._marqueeIdleId) { GLib.source_remove(this._marqueeIdleId); this._marqueeIdleId = 0; }
+        if (this._marqueeIdleId > 0) {
+            GLib.source_remove(this._marqueeIdleId);
+            this._marqueeIdleId = 0;
+        }
         this._marqueeIdleId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             this._setupMarquee();
             this._marqueeIdleId = 0;
