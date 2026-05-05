@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.beqs" path="/org/gnome/shell/extensions/beqs/">
+    <!-- #region Debug -->
+    <key name="debug-expose" type="b">
+      <default>false</default>
+    </key>
+    <key name="debug-show-layout-border" type="b">
+      <default>false</default>
+    </key>
+    <key name="debug-log-level" type="i">
+      <default>0</default>
+    </key>
+    <!-- #endregion Debug -->
+
+    <!-- #region Notifications Widget -->
+    <key name="notifications-enabled" type="b">
+      <default>true</default>
+    </key>
+    <key name="notifications-show-header" type="b">
+      <default>true</default>
+    </key>
+    <key name="notifications-use-native-controls" type="b">
+      <default>false</default>
+    </key>
+    <key name="notifications-compact" type="b">
+      <default>true</default>
+    </key>
+    <key name="notifications-autohide" type="b">
+      <default>true</default>
+    </key>
+    <key name="notifications-max-height" type="i">
+      <default>292</default>
+    </key>
+    <key name="notifications-fade-offset" type="i">
+      <default>46</default>
+    </key>
+    <key name="notifications-remove-shadow" type="b">
+      <default>true</default>
+    </key>
+    <key name="notifications-show-scrollbar" type="b">
+      <default>true</default>
+    </key>
+    <key name="notifications-swipe-to-discard" type="b">
+      <default>true</default>
+    </key>
+    <key name="notifications-position" type="s">
+      <choices>
+        <choice value='left'/>
+        <choice value='bottom'/>
+      </choices>
+      <default>'bottom'</default>
+    </key>
+    <key name="notifications-auto-clear-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="notifications-auto-clear-regex" type="s">
+      <default>''</default>
+    </key>
+    <key name="notifications-max-width" type="i">
+      <default>340</default>
+    </key>
+    <!-- #endregion Notifications Widget -->
+
+    <!-- #region Media Widget -->
+    <key name="media-enabled" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-use-itunes-cover" type="b">
+      <default>false</default>
+      <summary>Use iTunes covers (Experimental)</summary>
+      <description>Download high-resolution artwork from iTunes. This feature is experimental and may not work correctly for all tracks.</description>
+    </key>
+    <key name="media-contorl-show-next-button" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-contorl-show-prev-button" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-contorl-show-pause-button" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-show-header" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-compact" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-contorl-opacity" type="i">
+      <default>230</default>
+    </key>
+    <key name="media-progress-enabled" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-progress-style" type="s">
+      <default>'slim'</default>
+      <choices>
+        <choice value='default'/>
+        <choice value='slim'/>
+      </choices>
+    </key>
+    <key name="media-progress-handle-color" type="ai">
+      <default>[]</default>
+    </key>
+    <key name="media-progress-handle-radius" type="i">
+      <default>0</default>
+    </key>
+    <key name="media-progress-background-color" type="ai">
+      <default>[]</default>
+    </key>
+    <key name="media-progress-active-background-color" type="ai">
+      <default>[]</default>
+    </key>
+    <key name="media-progress-height" type="i">
+      <default>0</default>
+    </key>
+    <key name="media-remove-shadow" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-gradient-enabled" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-gradient-background-color" type="ai">
+      <default>[127,127,127]</default>
+    </key>
+    <key name="media-gradient-start-opaque" type="i">
+      <default>340</default>
+    </key>
+    <key name="media-gradient-start-mix" type="i">
+      <default>820</default>
+    </key>
+    <key name="media-gradient-end-opaque" type="i">
+      <default>160</default>
+    </key>
+    <key name="media-gradient-end-mix" type="i">
+      <default>180</default>
+    </key>
+    <key name="media-scroll-title" type="b">
+      <default>true</default>
+    </key>
+    <key name="media-cover-aspect-ratio" type="s">
+      <choices>
+        <choice value='fill'/>
+        <choice value='fit'/>
+        <choice value='zoom'/>
+      </choices>
+      <default>'zoom'</default>
+    </key>
+    <key name="media-cava-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="media-cava-shape" type="s">
+      <choices>
+        <choice value='bars'/>
+        <choice value='wave'/>
+        <choice value='blocks'/>
+      </choices>
+      <default>'bars'</default>
+    </key>
+    <key name="media-cava-color" type="ai">
+      <default>[]</default>
+    </key>
+    <key name="media-cava-transparency" type="i">
+      <default>200</default>
+    </key>
+    <key name="media-cava-position" type="s">
+      <choices>
+        <choice value='background'/>
+        <choice value='top'/>
+        <choice value='bottom'/>
+      </choices>
+      <default>'background'</default>
+    </key>
+    <key name="media-cava-background-align" type="s">
+      <choices>
+        <choice value='bottom'/>
+        <choice value='center'/>
+        <choice value='top'/>
+      </choices>
+      <default>'bottom'</default>
+    </key>
+    <key name="media-cava-gradient-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="media-cava-color-end" type="ai">
+      <default>[]</default>
+    </key>
+    <key name="media-cava-sensitivity" type="i">
+      <default>100</default>
+    </key>
+    <key name="volume-mixer-available-outputs" type="as">
+      <default>[]</default>
+      <summary>Available output audio devices</summary>
+    </key>
+    <key name="volume-mixer-available-inputs" type="as">
+      <default>[]</default>
+      <summary>Available input audio devices</summary>
+    </key>
+    <!-- #endregion Media Widget -->
+
+    <!-- #region Weather Widget -->
+    <key name="weather-show-header" type="b">
+      <default>true</default>
+    </key>
+    <key name="weather-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="weather-remove-shadow" type="b">
+      <default>true</default>
+    </key>
+    <key name="weather-compact" type="b">
+      <default>true</default>
+    </key>
+    <key name="weather-click-command" type="s">
+      <default>''</default>
+    </key>
+    <key name="weather-show-location" type="b">
+      <default>true</default>
+    </key>
+    <key name="weather-max-forecasts" type="i">
+      <default>5</default>
+    </key>
+    <key name="weather-interval-hour" type="i">
+      <default>1</default>
+    </key>
+    <key name="weather-daily-forecast" type="b">
+      <default>false</default>
+    </key>
+    <!-- #endregion Weather Widget -->
+
+    <!-- #region Volume Mixer Widget -->
+    <key name="volume-mixer-enabled" type="b">
+      <default>true</default>
+    </key>
+    <key name="volume-mixer-only-playing" type="b">
+      <default>true</default>
+    </key>
+    <key name="volume-mixer-label-text" type="s">
+      <default>'none'</default>
+      <choices>
+        <choice value='title'/>
+        <choice value='description'/>
+        <choice value='both'/>
+        <choice value='none'/>
+      </choices>
+    </key>
+    <key name="volume-mixer-label-opacity" type="i">
+      <default>220</default>
+    </key>
+    <key name="volume-mixer-show-scrollbar" type="b">
+      <default>true</default>
+    </key>
+    <key name="volume-mixer-show-header" type="b">
+      <default>true</default>
+    </key>
+    <key name="volume-mixer-max-height" type="i">
+      <default>0</default>
+    </key>
+    <key name="volume-mixer-fade-offset" type="i">
+      <default>46</default>
+    </key>
+    <key name="volume-mixer-ignore" type="aa{sv}">
+      <default><![CDATA[
+        [
+        ]
+      ]]></default>
+    </key>
+    <key name="volume-mixer-order" type="aa{sv}">
+      <default><![CDATA[
+        [
+        ]
+      ]]></default>
+    </key>
+    <key name="volume-mixer-group-by" type="aa{sv}">
+      <default><![CDATA[
+        [
+        ]
+      ]]></default>
+    </key>
+    <key name="volume-mixer-ignore-mode" type="s">
+      <choices>
+        <choice value='block'/>
+        <choice value='allow'/>
+      </choices>
+      <default>'block'</default>
+    </key>
+    <key name="volume-mixer-show-icon" type="b">
+      <default>true</default>
+    </key>
+    <key name="volume-mixer-menu-icon" type="s">
+      <default>'open-menu-symbolic'</default>
+    </key>
+    <key name="volume-mixer-menu-enabled" type="b">
+      <default>true</default>
+    </key>
+    <key name="volume-mixer-hide-devices" type="as">
+      <default>[]</default>
+    </key>
+    <key name="volume-mixer-custom-names" type="a{ss}">
+      <default>{}</default>
+    </key>
+    <key name="volume-mixer-input-always-show" type="b">
+      <default>true</default>
+    </key>
+    <key name="volume-mixer-more-icon-sound-card" type="b">
+      <default>false</default>
+    </key>
+    <!-- #endregion Volume Mixer Widget -->
+
+    <!-- #region Date Menu Layout -->
+    <key name="datemenu-hide-left-box" type="b">
+      <default>true</default>
+    </key>
+    <key name="datemenu-hide-right-box" type="b">
+      <default>false</default>
+    </key>
+    <key name="datemenu-disable-menu" type="b">
+      <default>false</default>
+    </key>
+    <!-- #endregion Date Menu Layout -->
+
+    <!-- #region System Items Layout -->
+    <key name="system-items-layout-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-items-layout-hide" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-items-layout-hide-screenshot" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-items-layout-hide-settings" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-items-layout-hide-lock" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-items-layout-hide-shutdown" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-items-layout-hide-battery" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-items-layout-order" type="as">
+      <default>['battery', 'laptopSpacer', 'screenshot', 'settings', 'desktopSpacer', 'lock', 'shutdown']</default>
+    </key>
+    <!-- #endregion System Items Layout -->
+
+    <!-- #region System Indicator Layout -->
+    <key name="system-indicator-privacy-indicator-style" type="s">
+      <default>'default'</default>
+      <choices>
+        <choice value='default'/>
+        <choice value='monochrome'/>
+        <choice value='accent'/>
+      </choices>
+    </key>
+    <key name="system-indicator-screen-sharing-indicator-use-accent" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-indicator-screen-recording-indicator-use-accent" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-indicator-layout-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-indicator-layout-order" type="aa{sv}">
+      <default><![CDATA[
+        [
+          { 'nonOrdered': <true>, 'hide': <false> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_remoteAccess_RemoteAccessApplet'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_camera_Indicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_volume_InputIndicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_location_Indicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_thunderbolt_Indicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_nightLight_Indicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_network_Indicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_bluetooth_Indicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_rfkill_Indicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_volume_OutputIndicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_ui_panel_UnsafeModeIndicator'> },
+          { 'hide': <false>, 'isSystem': <true>, 'gtypeName': <'Gjs_status_system_Indicator'> }
+        ]
+      ]]></default>
+    </key>
+    <!-- #endregion System Indicator Layout -->
+
+    <!-- #region Input Output -->
+    <key name="output-show-selected" type="b">
+      <default>false</default>
+    </key>
+    <key name="input-show-selected" type="b">
+      <default>false</default>
+    </key>
+    <key name="input-always-show" type="b">
+      <default>false</default>
+    </key>
+    <key name="input-menu-icon" type="s">
+      <default>'open-menu-symbolic'</default>
+    </key>
+    <key name="output-menu-icon" type="s">
+      <default>'open-menu-symbolic'</default>
+    </key>
+    <!-- #endregion Input Output -->
+
+    <!-- #region Quick Toggle Layout -->
+    <key name="toggles-layout-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="toggles-layout-order" type="aa{sv}">
+      <default><![CDATA[
+        [
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'NMWiredToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'NMWirelessToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'NMModemToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'NMBluetoothToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'NMVpnToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'BluetoothToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'PowerProfilesToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'NightLightToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'DarkModeToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'KeyboardBrightnessToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'RfkillToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'RotationToggle'> },
+          { 'hide': <false>, 'isSystem': <true>, 'constructorName': <'UnsafeQuickToggle'> },
+          { 'nonOrdered': <true>, 'hide': <false> }
+        ]
+      ]]></default>
+    </key>
+    <key name="toggles-detected-list" type="as">
+      <default>[]</default>
+      <summary>Detected toggles list</summary>
+    </key>
+    <!-- #endregion Quick Toggle Layout -->
+
+    <!-- #region Unsafe Mode Quick Toggle -->
+    <key name="unsafe-quick-toggle-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="unsafe-quick-toggle-last-state" type="b">
+      <default>false</default>
+    </key>
+    <key name="unsafe-quick-toggle-save-last-state" type="b">
+      <default>true</default>
+    </key>
+    <!-- #endregion Unsafe Mode Quick Toggle -->
+
+    <!-- #region Overlay Menu -->
+    <key name="overlay-menu-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="overlay-menu-width" type="i">
+      <default>380</default>
+    </key>
+    <key name="overlay-menu-animate-duration" type="i">
+      <default>360</default>
+    </key>
+    <key name="overlay-menu-animate-style" type="s">
+      <choices>
+        <choice value='flyout'/>
+        <choice value='dialog'/>
+        <choice value='slide-down'/>
+        <choice value='slide-up'/>
+        <choice value='fade'/>
+        <choice value='zoom'/>
+        <choice value='spin'/>
+        <choice value='flip'/>
+        <choice value='bounce'/>
+        <choice value='swing'/>
+        <choice value='elastic'/>
+        <choice value='unfold'/>
+      </choices>
+      <default>'dialog'</default>
+    </key>
+    <key name="layout" type="a{sai}">
+      <default>
+        {
+          'weather-widget': [0, 0],
+          'notifications-widget': [0, 0],
+          'media-widget': [0, 0],
+          'mixer-widget': [0, 0]
+        }
+      </default>
+    </key>
+    <!-- #endregion Overlay Menu -->
+
+    <key name="system-time-format" type="s">
+      <default>'datemenu'</default>
+    </key>
+    <key name="system-battery-show-percentage" type="b">
+      <default>false</default>
+    </key>
+    <key name="system-hygrometer-enabled" type="b">
+      <default>false</default>
+    </key>
+    <key name="panel-order" type="as">
+      <default>['weather', 'notifications', 'media', 'mixer']</default>
+    </key>
+    <key name="panel-position" type="s">
+      <choices>
+        <choice value='left'/>
+        <choice value='center'/>
+        <choice value='right'/>
+      </choices>
+      <default>'center'</default>
+    </key>
+    <key name="panel-widgets-position" type="s">
+      <choices>
+        <choice value='top'/>
+        <choice value='bottom'/>
+      </choices>
+      <default>'bottom'</default>
+    </key>
+    <key name="background-apps-style" type="s">
+      <choices>
+        <choice value='general'/>
+        <choice value='quick-toggle'/>
+        <choice value='system'/>
+      </choices>
+      <default>'general'</default>
+    </key>
+    <key name="toggles-layout-hide-background-apps" type="b">
+      <default>false</default>
+    </key>
+  </schema>
+</schemalist>

@@ -1,0 +1,16 @@
+{
+  "name": "Better Quick Settings",
+  "uuid": "beQS@unaibenidorm",
+  "description": "beQS: Better Quick Settings. A powerful extension to tweak and enhance GNOME's Quick Settings.",
+  "shell-version": [
+    "48",
+    "49",
+    "50"
+  ],
+  "url": "https://github.com/unaibenidorm/beQS",
+  "settings-schema": "org.gnome.shell.extensions.beqs",
+  "gettext-domain": "beqs",
+  "donations": {
+    "github": "unaibenidorm"
+  }
+}
