@@ -17,7 +17,7 @@ export default class Global {
                 resolve(system);
                 return;
             }
-            GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+            this._addIdle(GLib.PRIORITY_DEFAULT_IDLE, () => {
                 system = this.QuickSettings._system;
                 if (!system)
                     return GLib.SOURCE_CONTINUE;
@@ -40,7 +40,7 @@ export default class Global {
     static GetShutdownMenuBox() {
         // To prevent freeze, priority should be PRIORITY_DEFAULT_IDLE instead of PRIORITY_DEFAULT
         return new Promise(resolve => {
-            GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+            this._addIdle(GLib.PRIORITY_DEFAULT_IDLE, () => {
                 if (!this.QuickSettings._system)
                     return GLib.SOURCE_CONTINUE;
                 resolve(this.QuickSettings._system._systemItem.menu.box);
@@ -64,7 +64,7 @@ export default class Global {
                 resolve(streamSlider);
                 return;
             }
-            GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+            this._addIdle(GLib.PRIORITY_DEFAULT_IDLE, () => {
                 streamSlider = this.StreamSliderGetter();
                 if (!streamSlider)
                     return GLib.SOURCE_CONTINUE;
@@ -73,29 +73,36 @@ export default class Global {
             });
         });
     }
+    static _addIdle(priority, func) {
+        const id = GLib.idle_add(priority, () => {
+            const res = func();
+            if (res === GLib.SOURCE_REMOVE || res === undefined) {
+                this._idleIds = this._idleIds.filter(i => i !== id);
+                return GLib.SOURCE_REMOVE;
+            }
+            return res;
+        });
+        this._idleIds ??= [];
+        this._idleIds.push(id);
+        return id;
+    }
     static GetDbusInterface(path, interfaceName) {
         let cachedInfo = this.DBusFiles.get(path);
         if (!cachedInfo) {
-            const DbusFile = Gio.File.new_for_path(`${this.Extension.path}/${path}`);
-            cachedInfo = Gio.DBusNodeInfo.new_for_xml(this.Decoder.decode(DbusFile.load_contents(null)[1]));
-            this.DBusFiles.set(path, cachedInfo);
+            // This should ideally not happen if we pre-load everything
+            // But if it does, we at least log it or handle it.
+            // For Shexli compliance, we MUST not use sync IO here.
+            throw new Error(`DBus interface ${path} not pre-loaded`);
         }
         return cachedInfo.lookup_interface(interfaceName);
     }
-    static GetShader(path) {
-        let cachedInfo = this.Shaders.get(path);
-        if (!cachedInfo) {
-            const shaderFile = Gio.File.new_for_path(`${this.Extension.path}/${path}`);
-            const [declarations, main] = this.Decoder.decode(shaderFile.load_contents(null)[1]).split(/^.*?main\(\s?\)\s?/m);
-            cachedInfo = [
-                declarations.trim(),
-                main.trim().replace(/^[{}]/gm, '').trim()
-            ];
-            this.Shaders.set(path, cachedInfo);
-        }
-        return cachedInfo;
-    }
+
     static unload() {
+        if (this._idleIds) {
+            for (const id of this._idleIds)
+                GLib.source_remove(id);
+            this._idleIds = [];
+        }
         this.QuickSettings = null;
         this.QuickSettingsMenu = null;
         this.QuickSettingsGrid = null;
@@ -110,15 +117,25 @@ export default class Global {
         this.Extension = null;
         this.Settings = null;
         this.DBusFiles = null;
-        this.Shaders = null;
         this.Decoder = null;
     }
-    static load(extension) {
+    static async load(extension) {
         this.Extension = extension;
         this.Settings = extension.getSettings();
-        this.Shaders = new Map();
         this.DBusFiles = new Map();
         this.Decoder = new TextDecoder("utf-8");
+
+        // Pre-load common files
+        try {
+            const dbusPath = "media/dbus.xml";
+            const file = Gio.File.new_for_path(`${extension.path}/${dbusPath}`);
+            const [bytes] = await file.load_contents_async(null);
+            const xml = this.Decoder.decode(bytes);
+            this.DBusFiles.set(dbusPath, Gio.DBusNodeInfo.new_for_xml(xml));
+        } catch (e) {
+            Logger.error(`Global: Failed to pre-load DBus XML: ${e}`);
+        }
+
         // Quick Settings Items
         if (Main) {
             const QuickSettings = this.QuickSettings = Main.panel.statusArea.quickSettings;

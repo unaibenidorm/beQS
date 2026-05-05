@@ -3,7 +3,6 @@
   "uuid": "beQS@unaibenidorm",
   "description": "beQS: Better Quick Settings. A powerful extension to tweak and enhance GNOME's Quick Settings.",
   "shell-version": [
-    "48",
     "49",
     "50"
   ],

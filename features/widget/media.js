@@ -144,8 +144,10 @@ class MarqueeLabel extends St.ScrollView {
 
     _restartDeferred() {
         this._stop();
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        if (this._idleId) { GLib.source_remove(this._idleId); this._idleId = 0; }
+        this._idleId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             if (this.mapped && this._enabled) this._start();
+            this._idleId = 0;
             return GLib.SOURCE_REMOVE;
         });
     }
@@ -171,6 +173,7 @@ class MarqueeLabel extends St.ScrollView {
     _stop() {
         this._scrolling = false;
         if (this._scrollId) { GLib.source_remove(this._scrollId); this._scrollId = 0; }
+        if (this._idleId) { GLib.source_remove(this._idleId); this._idleId = 0; }
         const adj = this.get_hscroll_bar()?.get_adjustment?.();
         if (adj) adj.set_value(0);
     }
@@ -246,7 +249,7 @@ class Player extends GObject.Object {
             return;
         }
 
-        // console.log(`[beQS] Media: Metadata keys: ${Object.keys(metadata).join(", ")}`);
+        // Logger.debug(`[beQS] Media: Metadata keys: ${Object.keys(metadata).join(", ")}`);
         
         const oldTrackId = this._trackId;
         this._trackId       = metadata["mpris:trackid"]?.get_string?.()[0] ?? null;
@@ -308,12 +311,12 @@ class Player extends GObject.Object {
         try {
             this._parseMetadata(this._playerProxy?.Metadata);
         } catch (e) {
-            console.log(`[beQS] Media: Error parsing metadata: ${e}`);
+            Logger.error(`[beQS] Media: Error parsing metadata: ${e}`);
         }
         this.emit("changed");
 
         if (this._options?.useItunesCover) {
-            this._fetchItunesCover().catch(e => console.log(`[beQS] iTunes: Uncaught error: ${e}`));
+            this._fetchItunesCover().catch(e => Logger.error(`[beQS] iTunes: Uncaught error: ${e}`));
         } else if (this._trackCoverUrl && this._trackCoverUrl.startsWith("http") && this._options?.gradientEnabled) {
              // If using system cover and it's remote, we might need to emit changed 
              // once it's available, but MPRIS usually handles this.
@@ -357,7 +360,7 @@ class Player extends GObject.Object {
         }
 
         if (!title) {
-            console.log("[beQS] iTunes: Skipping – no valid title found.");
+            Logger.debug("[beQS] iTunes: Skipping – no valid title found.");
             return;
         }
 
@@ -377,12 +380,12 @@ class Player extends GObject.Object {
         this._lastFetchedItunesTrack  = trackKey;
 
         try {
-            console.log(`[beQS] iTunes: Querying ${apiUrl}`);
+            Logger.debug(`[beQS] iTunes: Querying ${apiUrl}`);
 
             // ── Step 1: fetch JSON from iTunes Search API via curl ───────────
             const responseText = await curlText(apiUrl);
             if (!responseText) {
-                console.log("[beQS] iTunes: Empty response from API");
+                Logger.debug("[beQS] iTunes: Empty response from API");
                 return;
             }
 
@@ -390,19 +393,19 @@ class Player extends GObject.Object {
             try {
                 json = JSON.parse(responseText);
             } catch (e) {
-                console.log(`[beQS] iTunes: JSON parse error: ${e}. Preview: ${responseText.substring(0, 120)}`);
+                Logger.error(`[beQS] iTunes: JSON parse error: ${e}. Preview: ${responseText.substring(0, 120)}`);
                 return;
             }
 
             if (!json || !json.resultCount || !json.results[0]?.artworkUrl100) {
-                console.log("[beQS] iTunes: No results found");
+                Logger.debug("[beQS] iTunes: No results found");
                 return;
             }
 
             // ── Step 2: build the high-res artwork URL ───────────────────────
             const artworkUrl100  = json.results[0].artworkUrl100;
             const artworkUrl1000 = artworkUrl100.replace(/\/\d+x\d+[a-z]*\.jpg$/i, "/1000x1000bb.jpg");
-            console.log(`[beQS] iTunes: Found artwork: ${artworkUrl1000}`);
+            Logger.debug(`[beQS] iTunes: Found artwork: ${artworkUrl1000}`);
 
             // ── Step 3: check local cache ────────────────────────────────────
             ensureDir(COVER_DIR);
@@ -412,27 +415,27 @@ class Player extends GObject.Object {
             const coverFile = Gio.File.new_for_path(coverPath);
 
             if (coverFile.query_exists(null)) {
-                console.log(`[beQS] iTunes: Cache hit – ${coverPath}`);
+                Logger.debug(`[beQS] iTunes: Cache hit – ${coverPath}`);
                 this._trackCoverUrl = `file://${coverPath}`;
                 this.emit("changed");
                 return;
             }
 
             // ── Step 4: download cover via curl ──────────────────────────────
-            console.log(`[beQS] iTunes: Downloading cover to ${coverPath}`);
+            Logger.debug(`[beQS] iTunes: Downloading cover to ${coverPath}`);
             await curlDownload(artworkUrl1000, coverPath);
 
             if (!Gio.File.new_for_path(coverPath).query_exists(null)) {
-                console.log("[beQS] iTunes: Download finished but file not found");
+                Logger.debug("[beQS] iTunes: Download finished but file not found");
                 return;
             }
 
             this._trackCoverUrl = `file://${coverPath}`;
-            console.log("[beQS] iTunes: Success! Applying cover.");
+            Logger.debug("[beQS] iTunes: Success! Applying cover.");
             this.emit("changed");
 
         } catch (e) {
-            console.log(`[beQS] iTunes: Error – ${e}`);
+            Logger.error(`[beQS] iTunes: Error – ${e}`);
         } finally {
             this._fetchingItunes = false;
         }
@@ -564,6 +567,21 @@ class Source extends GObject.Object {
         }
         if (newOwner) this._addPlayer(name);
     }
+
+    destroy() {
+        if (this._proxy) {
+            this._proxy.disconnectSignal("NameOwnerChanged");
+            this._proxy = null;
+        }
+        for (const player of this._players.values()) {
+            if (player._removeTimeoutId) {
+                GLib.source_remove(player._removeTimeoutId);
+                player._removeTimeoutId = 0;
+            }
+            player._close();
+        }
+        this._players.clear();
+    }
 }
 GObject.registerClass({
     Signals: {
@@ -684,12 +702,22 @@ class MediaItem extends MessageList.Message {
         this._player.connectObject("changed", this._update.bind(this), this);
         this._marqueeTitle       = null;
         this._titleActorResolved = false;
+        this.connect("destroy", () => {
+            if (this._marqueeIdleId) { GLib.source_remove(this._marqueeIdleId); this._marqueeIdleId = 0; }
+            this._marqueeTitle = null;
+            this._progressControl = null;
+        });
         this._update();
         this._setupMarqueeDeferred();
     }
 
     _setupMarqueeDeferred() {
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => { this._setupMarquee(); return GLib.SOURCE_REMOVE; });
+        if (this._marqueeIdleId) { GLib.source_remove(this._marqueeIdleId); this._marqueeIdleId = 0; }
+        this._marqueeIdleId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            this._setupMarquee();
+            this._marqueeIdleId = 0;
+            return GLib.SOURCE_REMOVE;
+        });
     }
 
     _setupMarquee() {
@@ -841,6 +869,10 @@ class MediaList extends St.BoxLayout {
 
     _init(options) {
         super._init({ can_focus: true, reactive: true, track_hover: true, hover: false, clip_to_allocation: true });
+        this.connect("destroy", () => {
+            if (this._source) { this._source.destroy(); this._source = null; }
+            this._items.clear();
+        });
 
         this._current        = null;
         this._options        = options;

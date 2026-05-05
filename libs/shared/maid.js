@@ -15,10 +15,6 @@ class Maid {
         this.getRecords().push([Maid.TaskType.Dispose, priority, object]);
         return object;
     }
-    runDisposeJob(object, priority = 0) {
-        this.getRecords().push([Maid.TaskType.RunDispose, priority, object]);
-        return object;
-    }
     destroyJob(object, priority = 0) {
         this.getRecords().push([Maid.TaskType.Destroy, priority, object]);
         return object;
@@ -70,9 +66,7 @@ class Maid {
                 case Maid.TaskType.Dispose:
                     record[2].dispose();
                     break;
-                case Maid.TaskType.RunDispose:
-                    record[2].run_dispose();
-                    break;
+
                 case Maid.TaskType.Destroy:
                     record[2].destroy();
                     break;
@@ -116,7 +110,6 @@ class Maid {
         TaskType[TaskType["Connect"] = 0] = "Connect";
         TaskType[TaskType["Function"] = 1] = "Function";
         TaskType[TaskType["Dispose"] = 2] = "Dispose";
-        TaskType[TaskType["RunDispose"] = 3] = "RunDispose";
         TaskType[TaskType["Destroy"] = 4] = "Destroy";
         TaskType[TaskType["Patch"] = 5] = "Patch";
         TaskType[TaskType["Hide"] = 6] = "Hide";

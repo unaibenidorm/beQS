@@ -61,10 +61,11 @@ class CavaWidget extends St.BoxLayout {
 
         this.connect('destroy', this._onDestroy.bind(this));
 
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        this._idleId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             if (this.get_stage()) {
                 this._startCava();
             }
+            this._idleId = 0;
             return GLib.SOURCE_REMOVE;
         });
     }
@@ -234,10 +235,11 @@ ascii_max_range = 100
             try { this._dataStream.close_async(0, null, null); } catch (_e) {}
             this._dataStream = null;
         }
-        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        this._idleId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
             if (this.get_stage() && !this.is_destroyed?.()) {
                 this._startCava();
             }
+            this._idleId = 0;
             return GLib.SOURCE_REMOVE;
         });
     }
@@ -259,6 +261,10 @@ ascii_max_range = 100
     }
 
     _onDestroy() {
+        if (this._idleId) {
+            GLib.source_remove(this._idleId);
+            this._idleId = 0;
+        }
         this._cancellable.cancel();
 
         if (this._cavaProc) {

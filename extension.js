@@ -144,10 +144,16 @@ export default class QstExtension extends Extension {
 
         if (this._mixerSub) {
             const mixer = _getMixer();
-            if (mixer)
+            if (mixer) {
                 mixer.disconnect(this._mixerSub);
+                if (this._mixerInputSub)
+                    mixer.disconnect(this._mixerInputSub);
+            }
             this._mixerSub = null;
+            this._mixerInputSub = null;
         }
+
+        this._settings = null;
 
         _clearDelays();
 
@@ -164,8 +170,8 @@ export default class QstExtension extends Extension {
         Logger("Disabled. " + (+new Date() - start) + "ms taken");
     }
 
-    enable() {
-        Global.load(this);
+    async enable() {
+        await Global.load(this);
 
         this.features = [
             new UnsafeQuickToggleFeature(),
@@ -221,9 +227,10 @@ export default class QstExtension extends Extension {
         const mixer = _getMixer();
         if (mixer) {
             this._mixerSub = mixer.connect("output-added", () => _applyAll(settings));
-            mixer.connect("input-added", () => _applyAll(settings));
+            this._mixerInputSub = mixer.connect("input-added", () => _applyAll(settings));
         } else {
             this._mixerSub = null;
+            this._mixerInputSub = null;
         }
     }
 }

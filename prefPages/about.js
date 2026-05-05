@@ -28,7 +28,7 @@ export const AboutPage = GObject.registerClass({
 			description: _("Official project links")
 		}, [
 			Row({
-				uri: "https://github.com/unaibenidorm/bQS",
+				uri: "https://github.com/unaibenidorm/beQS",
 				title: _("GitHub Repository"),
 				subtitle: _("Report bugs or check the source code."),
 				icon: "github",
