@@ -704,8 +704,14 @@ class MediaItem extends MessageList.Message {
         this._titleActorResolved = false;
         this.connect("destroy", () => {
             if (this._marqueeIdleId) { GLib.source_remove(this._marqueeIdleId); this._marqueeIdleId = 0; }
-            this._marqueeTitle = null;
-            this._progressControl = null;
+            if (this._marqueeTitle) {
+                this._marqueeTitle.destroy();
+                this._marqueeTitle = null;
+            }
+            if (this._progressControl) {
+                this._progressControl.destroy();
+                this._progressControl = null;
+            }
         });
         this._update();
         this._setupMarqueeDeferred();
@@ -1118,6 +1124,14 @@ class MediaWidget extends St.Widget {
             });
             GLib.Source.set_name_by_id(this._emptyTimeoutId, "[beQS] MediaWidget._emptyTimeoutId");
         }
+    }
+
+    destroy() {
+        if (this._emptyTimeoutId) {
+            GLib.source_remove(this._emptyTimeoutId);
+            this._emptyTimeoutId = 0;
+        }
+        super.destroy();
     }
 
     _updateStyleClass() {
