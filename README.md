@@ -21,8 +21,7 @@
 ## 🙏 Credits
 
 This project is based on the original [Quick Settings Tweaks](https://github.com/qwreey/quick-settings-tweaks) extension by **qwreey**, which introduced advanced customization for the GNOME Quick Settings panel (media controls, volume mixer, notifications, layout tweaks, overlay, etc.).  
-Huge **thanks** to qwreey for the original work and the inspiration to push this idea further.[web:5][web:15]
-
+Huge **thanks** to qwreey for the original work and the inspiration to push this idea further.
 ---
 
 ## 💎 Premium Features
@@ -38,7 +37,7 @@ Huge **thanks** to qwreey for the original work and the inspiration to push this
 ## 🎵 Media & Entertainment
 
 * **Enhanced Media Widget**: Beautiful cover art fetched from **iTunes**, smooth-scrolling titles, and dynamic layouts.
-* **Experimental Cover Support (non‑MPRIS)**: Experimental support for cover art even for players without MPRIS, downloading artwork from iTunes using available metadata.[web:20]
+* **Experimental Cover Support (non‑MPRIS)**: Experimental support for cover art even for players without MPRIS, downloading artwork from iTunes using available metadata.
 * **CAVA Integration**: Real‑time audio visualizer integrated into the Quick Settings menu.
 * **Metadata Mastery**: Smart track info parsing to display cleaner, more consistent titles.
 
@@ -54,8 +53,8 @@ Huge **thanks** to qwreey for the original work and the inspiration to push this
 
 ## 🎨 Aesthetics & UX
 
-* **Menu Opening Animations**: Smooth opening animations for the menu to make interactions feel more fluid and polished.[web:45]
-* **Modern Design**: Clean, minimal design that fits the latest GNOME aesthetics.[web:41]
+* **Menu Opening Animations**: Smooth opening animations for the menu to make interactions feel more fluid and polished.
+* **Modern Design**: Clean, minimal design that fits the latest GNOME aesthetics.
 
 ---
 
