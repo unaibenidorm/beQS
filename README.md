@@ -82,7 +82,7 @@ glib-compile-schemas \
 
 ### 4. Enable
 
-Enable **Better Quick Settings** via the GNOME Extensions app or Extension Manager.[web:12]
+Enable **Better Quick Settings** via the GNOME Extensions app or Extension Manager.
 
 ---
 
