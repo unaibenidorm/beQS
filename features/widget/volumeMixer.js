@@ -570,16 +570,22 @@ export class VolumeMixerWidgetFeature extends FeatureBase {
     }
 
     onLoad() {
+        if (!this.enabled)
+            return;
+
         this.maid.destroyJob(
             (this.volumeMixerWidget = new VolumeMixerWidget(this))
         );
 
         if (this.menuEnabled) {
             Global.GetStreamSlider()
-                .then(({ OutputStreamSlider }) => this.createMenu(OutputStreamSlider))
+                .then(({ OutputStreamSlider }) =>
+                    this.createMenu(OutputStreamSlider)
+                )
                 .catch(Logger.error);
         } else {
             Global.QuickSettingsMenu.addItem(this.volumeMixerWidget, 2);
+
             Global.GetStreamSlider().then(({ InputStreamSlider }) => {
                 Global.QuickSettingsGrid.set_child_above_sibling(
                     this.volumeMixerWidget,
